@@ -1,0 +1,24 @@
+{
+  "name": "intentracker",
+  "version": "0.1.0",
+  "description": "Tracks project intent (goals, constraints, decisions) across agent sessions via AGENTS.md",
+  "author": {
+    "name": "Anthony Fu",
+    "email": "anthonyfu117@hotmail.com",
+    "url": "https://github.com/antfu"
+  },
+  "homepage": "https://github.com/antfu/intentracker",
+  "repository": "https://github.com/antfu/intentracker",
+  "license": "MIT",
+  "keywords": [
+    "intent",
+    "goals",
+    "decisions",
+    "context",
+    "agent",
+    "memory"
+  ],
+  "hooks": "../hooks",
+  "commands": "../commands",
+  "skills": "../skills"
+}
