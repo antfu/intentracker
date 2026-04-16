@@ -2,7 +2,7 @@ import { lstatSync, mkdirSync, readFileSync, readlinkSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { INTENT_START_MARKER, PREAMBLE } from '../src/constants'
+import { INTENT_START_MARKER } from '../src/constants'
 import { createAgentsFile, injectIntent } from '../src/inject'
 import { extractIntentSection, parseIntent } from '../src/parse'
 import { createInitialIntent } from '../src/serialize'
@@ -19,15 +19,15 @@ describe('init logic', () => {
     rmSync(dir, { recursive: true, force: true })
   })
 
-  it('creates AGENTS.md with preamble and intent section', () => {
+  it('creates AGENTS.md with intent section and inline rules', () => {
     const content = createAgentsFile()
     const path = join(dir, 'AGENTS.md')
     writeFileSync(path, content)
 
     const written = readFileSync(path, 'utf-8')
-    expect(written).toContain(PREAMBLE)
     expect(written).toContain(INTENT_START_MARKER)
     expect(written).toContain('### Current Goals')
+    expect(written).toContain('snapshots: rewrite to reflect current state')
   })
 
   it('is idempotent — does not duplicate intent section', () => {
@@ -43,14 +43,13 @@ describe('init logic', () => {
   it('injects intent into existing file without intent', () => {
     const existing = '# My Project\n\nSome documentation here.\n'
     const updated = injectIntent(existing, createInitialIntent())
-    expect(updated).toContain(PREAMBLE)
     expect(updated).toContain(INTENT_START_MARKER)
     expect(updated).toContain('# My Project')
   })
 
   it('replaces existing intent section', () => {
-    const original = `${PREAMBLE}\n\n## Intent\n\n### Current Goals\n- Old goal\n\n### Constraints\n\n### Key Decisions\n\n### Open Questions\n`
-    const newIntent = '## Intent\n\n### Current Goals\n- New goal\n\n### Constraints\n\n### Key Decisions\n\n### Open Questions'
+    const original = `## Intent Tracking\n\n### Current Goals\n- Old goal\n\n### Constraints\n\n### Key Decisions\n\n### Open Questions\n`
+    const newIntent = '## Intent Tracking\n\nRules here.\n\n### Current Goals\n- New goal\n\n### Constraints\n\n### Key Decisions\n\n### Open Questions'
     const updated = injectIntent(original, newIntent)
     expect(updated).toContain('- New goal')
     expect(updated).not.toContain('- Old goal')
@@ -80,12 +79,10 @@ describe('claude.md symlink behavior', () => {
     writeFileSync(agentsPath, createAgentsFile())
     symlinkSync('AGENTS.md', claudePath)
 
-    // Reading through the symlink should give the same content
     const agentsContent = readFileSync(agentsPath, 'utf-8')
     const claudeContent = readFileSync(claudePath, 'utf-8')
     expect(claudeContent).toBe(agentsContent)
 
-    // Verify it's a symlink
     expect(lstatSync(claudePath).isSymbolicLink()).toBe(true)
     expect(readlinkSync(claudePath)).toBe('AGENTS.md')
   })
@@ -94,13 +91,9 @@ describe('claude.md symlink behavior', () => {
     const agentsPath = join(dir, 'AGENTS.md')
     const claudePath = join(dir, 'CLAUDE.md')
 
-    // Create AGENTS.md with intent
     writeFileSync(agentsPath, createAgentsFile())
-
-    // Create a real CLAUDE.md with existing content
     writeFileSync(claudePath, '# Claude Config\n\nSome existing rules.\n')
 
-    // Simulate what init does: inject intent from AGENTS.md into CLAUDE.md
     const agentsContent = readFileSync(agentsPath, 'utf-8')
     const intentSection = extractIntentSection(agentsContent)
     expect(intentSection).not.toBeNull()
@@ -109,10 +102,8 @@ describe('claude.md symlink behavior', () => {
     const updated = injectIntent(claudeContent, intentSection!)
     writeFileSync(claudePath, updated)
 
-    // Both files should have intent
     expect(parseIntent(readFileSync(agentsPath, 'utf-8'))).not.toBeNull()
     expect(parseIntent(readFileSync(claudePath, 'utf-8'))).not.toBeNull()
-    // CLAUDE.md should preserve existing content
     expect(readFileSync(claudePath, 'utf-8')).toContain('# Claude Config')
   })
 })
@@ -122,7 +113,7 @@ describe('show logic', () => {
     const content = createAgentsFile()
     const intent = extractIntentSection(content)
     expect(intent).not.toBeNull()
-    expect(intent).toContain('## Intent')
+    expect(intent).toContain('## Intent Tracking')
   })
 
   it('returns null for file without intent', () => {

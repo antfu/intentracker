@@ -1,8 +1,8 @@
-import { INTENT_START_MARKER, PREAMBLE } from './constants'
+import { INTENT_START_MARKER } from './constants'
 import { createInitialIntent } from './serialize'
 
 /**
- * Find the line index of `## Intent` that is NOT inside an HTML comment.
+ * Find the line index of `## Intent Tracking` that is NOT inside an HTML comment.
  */
 function findIntentStart(lines: string[]): number {
   let inComment = false
@@ -23,8 +23,6 @@ function findIntentStart(lines: string[]): number {
 
 /**
  * Inject or replace the intent section in file content.
- * If the file already has an intent section, replace it.
- * If not, prepend preamble + intent section.
  */
 export function injectIntent(existingContent: string, intentMarkdown: string): string {
   const lines = existingContent.split('\n')
@@ -34,27 +32,26 @@ export function injectIntent(existingContent: string, intentMarkdown: string): s
     // Find end of existing intent section
     let endIndex = lines.length
     for (let i = startIndex + 1; i < lines.length; i++) {
-      if (lines[i].startsWith('## ') || lines[i].trim() === '---') {
+      if ((lines[i].startsWith('## ') && lines[i].trim() !== INTENT_START_MARKER) || lines[i].trim() === '---') {
         endIndex = i
         break
       }
     }
-    // Replace the existing intent section
     const before = lines.slice(0, startIndex)
     const after = lines.slice(endIndex)
     return [...before, intentMarkdown, ...after].join('\n')
   }
 
-  // No existing intent section — prepend with preamble
+  // No existing intent section — prepend
   if (existingContent.trim()) {
-    return `${PREAMBLE}\n\n${intentMarkdown}\n\n---\n\n${existingContent}`
+    return `${intentMarkdown}\n\n---\n\n${existingContent}`
   }
-  return `${PREAMBLE}\n\n${intentMarkdown}\n`
+  return `${intentMarkdown}\n`
 }
 
 /**
- * Create a new AGENTS.md file with preamble and empty intent section.
+ * Create a new AGENTS.md file with intent section.
  */
 export function createAgentsFile(): string {
-  return `${PREAMBLE}\n\n${createInitialIntent()}\n`
+  return `${createInitialIntent()}\n`
 }

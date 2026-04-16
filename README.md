@@ -19,49 +19,53 @@ Existing memory tools (CLAUDE.md, `.cursorrules`, Memory Bank, etc.) track **ope
 | Goes stale when | Code changes | User changes their mind |
 | Used for | Resuming work | Resolving ambiguity, guiding decisions |
 
-intentracker fills this gap. It maintains a single `## Intent` section in your `AGENTS.md` with four parts:
+intentracker fills this gap. It maintains a `## Intent Tracking` section in your `AGENTS.md` with inline maintenance rules and four subsections:
 
 - **Current Goals** — what you're building (snapshot, rewritten on change)
 - **Constraints** — technical boundaries and requirements (snapshot)
 - **Key Decisions** — why the project looks the way it does (append-only log with dates)
 - **Open Questions** — unresolved decisions (maintained actively)
 
-## Install
-
-```bash
-npm i intentracker
-```
+The maintenance rules are written as visible markdown — not HTML comments — so any agent that reads the file knows how to keep intent up to date.
 
 ## Usage
 
 ### Quick Start (any agent)
 
 ```bash
-# Create AGENTS.md with intent tracking
-npx intentracker init
+# Create AGENTS.md with intent tracking + symlink CLAUDE.md
+pnpx intentracker init
 
 # Also inject rules into your agent's config
-npx intentracker init --agent cursor
-npx intentracker init --agent cursor,windsurf,copilot
+pnpx intentracker init --agent cursor
+pnpx intentracker init --agent cursor,windsurf,copilot
 
 # Display current intent
-npx intentracker show
+pnpx intentracker show
 ```
 
-Supported agents: `cursor`, `windsurf`, `copilot`, `cline`, `codex`
+Supported agents: `cline`, `codex`, `copilot`, `cursor`, `windsurf`
 
-The `--agent` flag injects intent-awareness rules into the agent's config file (e.g., `.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`). The `AGENTS.md` file itself is always created — most agents read it natively.
+The `--agent` flag injects intent-awareness rules into the agent's config file (`.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`, `.clinerules`). The `AGENTS.md` file itself is always created — most agents read it natively.
 
 `init` also handles `CLAUDE.md` automatically:
 - If `CLAUDE.md` doesn't exist, it creates a symlink pointing to `AGENTS.md` — so Claude Code loads the same intent without duplication.
-- If `CLAUDE.md` already exists as a real file, the intent section is appended to both files.
+- If `CLAUDE.md` already exists as a real file, the intent section is injected into both files.
 
 ### Without any CLI
 
-You don't need this package at all. Just create an `AGENTS.md` file with this structure:
+You don't need this package at all. Just add this to your `AGENTS.md`:
 
 ```markdown
-## Intent
+## Intent Tracking
+
+This section tracks project intent. When the user changes project
+direction — new goals, constraints, or decisions about approach —
+update the subsections below following these rules:
+
+- **Current Goals** and **Constraints** are snapshots: rewrite to reflect current state
+- **Key Decisions** is append-only: add `[YYYY-MM-DD] description` entries, never remove
+- **Open Questions**: add when raised, remove when resolved (move to Key Decisions)
 
 ### Current Goals
 - Build a CLI that converts markdown to PDF with custom templates
@@ -78,7 +82,7 @@ You don't need this package at all. Just create an `AGENTS.md` file with this st
 - Should --watch use chokidar or fs.watch?
 ```
 
-The CLI just scaffolds this for you and optionally injects rules into agent config files.
+The inline rules tell any agent how to maintain the section. The CLI just scaffolds this for you.
 
 ## Claude Code Plugin
 
@@ -99,22 +103,6 @@ For Claude Code users, the plugin provides automatic hooks that load intent on s
 - **Session start** — Loads intent silently, uses it as authoritative context
 - **Pre-commit** — Detects direction changes in the conversation and updates the intent section
 
-## Library API
-
-```ts
-import { parseIntent, serializeIntent } from 'intentracker'
-
-const content = fs.readFileSync('AGENTS.md', 'utf-8')
-const intent = parseIntent(content)
-
-if (intent) {
-  console.log(intent.goals)
-  console.log(intent.constraints)
-  console.log(intent.decisions)
-  console.log(intent.openQuestions)
-}
-```
-
 ## How It Works with Other Tools
 
 intentracker complements existing memory systems — it doesn't replace them:
@@ -123,7 +111,7 @@ intentracker complements existing memory systems — it doesn't replace them:
 - **`.cursorrules` / `.windsurfrules`** handles behavioral instructions
 - **intentracker** handles directional context (goals, constraints, decisions)
 
-The `AGENTS.md` file format is plain markdown. Any agent that can read a file can follow the instructions in the HTML comment preamble. The Claude Code plugin adds automation on top; the file works without it.
+The `AGENTS.md` file is plain markdown with visible instructions. Any agent that reads project files will see the rules and know how to maintain intent. The Claude Code plugin adds automation on top; the file works without it.
 
 ## License
 

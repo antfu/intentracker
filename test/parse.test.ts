@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { extractIntentSection, parseIntent } from '../src/parse'
 
-const FULL_INTENT = `## Intent
+const FULL_INTENT = `## Intent Tracking
+
+This section tracks project intent.
 
 ### Current Goals
 - Build a CLI that converts markdown to PDF
@@ -19,7 +21,7 @@ const FULL_INTENT = `## Intent
 - Should --watch use chokidar or fs.watch?
 - Template caching strategy TBD`
 
-const FILE_WITH_INTENT = `<!-- preamble -->
+const FILE_WITH_INTENT = `# My Project
 
 ${FULL_INTENT}
 
@@ -62,7 +64,7 @@ describe('parseIntent', () => {
   })
 
   it('handles partial sections', () => {
-    const partial = `## Intent
+    const partial = `## Intent Tracking
 
 ### Current Goals
 - One goal only`
@@ -75,7 +77,7 @@ describe('parseIntent', () => {
   })
 
   it('handles empty subsections', () => {
-    const empty = `## Intent
+    const empty = `## Intent Tracking
 
 ### Current Goals
 

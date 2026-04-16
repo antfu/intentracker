@@ -1,4 +1,4 @@
-import type { Intent } from '../src/types'
+import type { Intent } from '../src/serialize'
 import { describe, expect, it } from 'vitest'
 import { parseIntent } from '../src/parse'
 import { createInitialIntent, serializeIntent } from '../src/serialize'
@@ -14,7 +14,7 @@ describe('serializeIntent', () => {
       openQuestions: ['Which test runner?'],
     }
     const result = serializeIntent(intent)
-    expect(result).toContain('## Intent')
+    expect(result).toContain('## Intent Tracking')
     expect(result).toContain('- Build a CLI tool')
     expect(result).toContain('- Support plugins')
     expect(result).toContain('- No external deps')
@@ -22,13 +22,15 @@ describe('serializeIntent', () => {
     expect(result).toContain('- Which test runner?')
   })
 
-  it('serializes empty intent', () => {
+  it('serializes empty intent with rules', () => {
     const result = createInitialIntent()
-    expect(result).toContain('## Intent')
+    expect(result).toContain('## Intent Tracking')
     expect(result).toContain('### Current Goals')
     expect(result).toContain('### Constraints')
     expect(result).toContain('### Key Decisions')
     expect(result).toContain('### Open Questions')
+    // Should include inline rules
+    expect(result).toContain('snapshots: rewrite to reflect current state')
   })
 
   it('round-trips through parse and serialize', () => {

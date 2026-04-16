@@ -6,7 +6,6 @@ import process from 'node:process'
 import { AGENT_CONFIG, AGENT_RULES, INTENT_START_MARKER } from './constants'
 import { createAgentsFile, injectIntent } from './inject'
 import { extractIntentSection } from './parse'
-import { createInitialIntent } from './serialize'
 
 const args = process.argv.slice(2)
 const command = args[0]
@@ -39,7 +38,7 @@ function injectAgentRules(agent: string): void {
     mkdirSync(dir, { recursive: true })
 
   const existing = existsSync(rulesPath) ? readFileSync(rulesPath, 'utf-8') : ''
-  if (existing.includes('Intent section')) {
+  if (existing.includes('Intent Tracking')) {
     console.log(`Intent rules already present in ${config.label}.`)
     return
   }
@@ -58,7 +57,7 @@ function initAgentsMd(agentsPath: string): void {
       console.log(`Intent tracking already initialized in AGENTS.md.`)
       return
     }
-    const updated = injectIntent(content, createInitialIntent())
+    const updated = injectIntent(content, extractIntentSection(createAgentsFile())!)
     writeFileSync(agentsPath, updated)
     console.log(`Added intent section to existing AGENTS.md.`)
   }
@@ -70,20 +69,17 @@ function initAgentsMd(agentsPath: string): void {
 
 function initClaudeMd(agentsPath: string, claudePath: string): void {
   if (!existsSync(claudePath)) {
-    // No CLAUDE.md — symlink it to AGENTS.md
     symlinkSync('AGENTS.md', claudePath)
     console.log(`Created CLAUDE.md as symlink to AGENTS.md.`)
     return
   }
 
-  // CLAUDE.md exists — check if it's already a symlink
   const stat = lstatSync(claudePath)
   if (stat.isSymbolicLink()) {
     console.log(`CLAUDE.md is already a symlink.`)
     return
   }
 
-  // CLAUDE.md is a real file — inject intent into it too
   const content = readFileSync(claudePath, 'utf-8')
   if (content.includes(INTENT_START_MARKER)) {
     console.log(`Intent tracking already present in CLAUDE.md.`)

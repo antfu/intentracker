@@ -1,8 +1,19 @@
-import type { Intent } from './types'
-import { INTENT_START_MARKER } from './constants'
+import { INTENT_RULES, INTENT_START_MARKER } from './constants'
+
+export interface Decision {
+  date: string
+  description: string
+}
+
+export interface Intent {
+  goals: string[]
+  constraints: string[]
+  decisions: Decision[]
+  openQuestions: string[]
+}
 
 export function serializeIntent(intent: Intent): string {
-  const lines: string[] = [INTENT_START_MARKER, '']
+  const lines: string[] = [INTENT_START_MARKER, '', INTENT_RULES, '']
 
   lines.push('### Current Goals')
   if (intent.goals.length > 0) {
