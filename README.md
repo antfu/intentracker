@@ -91,8 +91,11 @@ The inline rules tell any agent how to maintain the section. The CLI just scaffo
 
 For Claude Code users, the plugin provides automatic hooks that load intent on session start and reconcile it before commits — no manual maintenance needed.
 
+Install via the [Claude Code plugin system](https://code.claude.com/docs/en/discover-plugins#add-from-github):
+
 ```
-/plugin install intentracker
+/plugin marketplace add antfu/intentracker
+/plugin install intentracker@intentracker
 ```
 
 **Commands:**
