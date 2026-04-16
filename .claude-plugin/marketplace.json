@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "intentracker",
-      "source": ".",
+      "source": "./",
       "description": "Tracks project intent (goals, constraints, decisions) across agent sessions via AGENTS.md",
       "version": "0.1.0",
       "author": {
