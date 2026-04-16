@@ -1,3 +1,12 @@
+---
+description: >-
+  Detects when the user changes project direction (goals, scope, approach, or
+  constraints) and flags it for intent reconciliation. Use when the user gives
+  a directive that shifts what the project should become, not just a specific
+  code task.
+user-invocable: false
+---
+
 # Intent Awareness
 
 When the user gives a directive that changes the direction of
@@ -17,5 +26,5 @@ Examples of statements that are NOT direction changes:
 - "Add a test for the edge case we discussed"
 
 When you detect a direction change, you may proactively confirm:
-"Got it — I'll update the project intent to reflect [change].
+"Got it -- I'll update the project intent to reflect [change].
 You can review it anytime with `/intent:show`."

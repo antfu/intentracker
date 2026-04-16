@@ -1,3 +1,8 @@
+---
+description: Guide the user through updating project intent — goals, constraints, decisions, and open questions
+disable-model-invocation: true
+---
+
 # /intent:update
 
 Guide the user through updating their project intent.
