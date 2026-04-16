@@ -2,6 +2,9 @@
 
 Track project **intent** across AI agent sessions.
 
+> [!IMPORTANT]
+> This package is an experiment. I don't even know if it works yet.
+
 ## The Problem
 
 When working on a project across multiple agent sessions — whether in Claude Code, Cursor, Copilot, or any other AI coding tool — the agent starts each session with no understanding of *what you're trying to build* or *why you made past decisions*. You end up repeating yourself:
