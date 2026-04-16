@@ -1,0 +1,25 @@
+{
+  "description": "Intent tracking hooks: load intent on session start, update on direction changes",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "Check for `AGENTS.md` in the project root (or `CLAUDE.md` if no `AGENTS.md` exists).\n\nIf the file exists and contains an `## Intent` section:\n1. Read the full Intent section silently.\n2. Treat its contents as authoritative context for this session.\n3. When the user's request conflicts with existing code but aligns with stated intent, prefer intent.\n4. Do NOT summarize the intent to the user unless they ask.\n5. Do NOT mention that you loaded intent — just use it naturally.\n\nIf the file exists but has no `## Intent` section:\n- Do nothing. The user hasn't initialized intent tracking.\n\nIf the file does not exist:\n- Do nothing. Intent tracking will be initialized on first `/intent:init` or `/intent:update`."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "You are an intent tracker. Analyze the user's latest message to determine if it is a high-level directive that changes the direction of the project — such as changing goals, scope, approach, constraints, or making a key architectural decision.\n\nExamples of direction-changing statements:\n- \"Actually, let's make this a web app instead of a CLI\"\n- \"We should drop the real-time feature for v1\"\n- \"I don't want any external dependencies\"\n- \"Let's switch from REST to GraphQL\"\n- \"We need to support Node 18+\"\n\nExamples of statements that are NOT direction changes:\n- \"Fix the bug in the auth middleware\"\n- \"Rename this variable\"\n- \"Add a test for the edge case we discussed\"\n- \"Run the build\"\n\nIf the message is NOT a direction change, do nothing.\n\nIf the message IS a direction change:\n1. Read `AGENTS.md` (or `CLAUDE.md` if no `AGENTS.md` exists) in the project root.\n2. If the file does not exist or has no `## Intent` section, do nothing — intent tracking has not been initialized.\n3. If the `## Intent` section exists, update it:\n   - `### Current Goals`: rewrite to reflect the current state. This is a snapshot, not a log.\n   - `### Constraints`: rewrite to reflect the current state.\n   - `### Key Decisions`: append new entries with today's date in [YYYY-MM-DD] format and a concise summary including rationale.\n   - `### Open Questions`: add new questions raised, remove questions resolved (move to Key Decisions).\n4. Do NOT modify anything outside the `## Intent` section.\n\nGuidelines for writing intent:\n- Write in third person or imperative (\"The user wants...\" or \"Build a CLI that...\").\n- Be specific. \"Make it fast\" → \"Target < 200ms cold start.\"\n- Capture rationale in Key Decisions. \"Chose X\" → \"Chose X over Y because Z.\"\n- Keep each subsection concise."
+          }
+        ]
+      }
+    ]
+  }
+}

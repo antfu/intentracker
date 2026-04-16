@@ -1,3 +1,8 @@
+---
+description: Display the current project intent from AGENTS.md
+disable-model-invocation: true
+---
+
 # /intent:show
 
 Read `AGENTS.md` (or `CLAUDE.md`) and display the `## Intent`

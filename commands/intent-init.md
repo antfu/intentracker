@@ -1,3 +1,8 @@
+---
+description: Initialize intent tracking for this project by analyzing project files and creating an Intent section in AGENTS.md
+disable-model-invocation: true
+---
+
 # /intent:init
 
 Initialize intent tracking for this project.
