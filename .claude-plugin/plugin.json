@@ -17,8 +17,5 @@
     "context",
     "agent",
     "memory"
-  ],
-  "hooks": "../hooks",
-  "commands": "../commands",
-  "skills": "../skills"
+  ]
 }
