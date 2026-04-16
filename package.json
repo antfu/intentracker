@@ -1,0 +1,55 @@
+{
+  "name": "intentracker",
+  "type": "module",
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.33.0",
+  "description": "Track project intent (goals, constraints, decisions) across agent sessions",
+  "author": "Anthony Fu <anthonyfu117@hotmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/antfu/intentracker#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antfu/intentracker.git"
+  },
+  "bugs": "https://github.com/antfu/intentracker/issues",
+  "keywords": [
+    "intent",
+    "agent",
+    "claude",
+    "cursor",
+    "ai",
+    "context"
+  ],
+  "bin": {
+    "intentracker": "./dist/cli.mjs"
+  },
+  "files": [
+    ".claude-plugin",
+    "commands",
+    "dist",
+    "hooks",
+    "skills"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "start": "tsx src/cli.ts",
+    "prepublishOnly": "nr build",
+    "release": "bumpp && npm publish"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:cli",
+    "@antfu/ni": "catalog:cli",
+    "@types/node": "catalog:types",
+    "bumpp": "catalog:cli",
+    "eslint": "catalog:cli",
+    "tsdown": "catalog:cli",
+    "tsx": "catalog:cli",
+    "typescript": "catalog:cli",
+    "vite": "catalog:cli",
+    "vitest": "catalog:testing"
+  }
+}

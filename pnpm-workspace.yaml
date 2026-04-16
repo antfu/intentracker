@@ -1,0 +1,22 @@
+catalogMode: prefer
+ignoreWorkspaceRootCheck: true
+shellEmulator: true
+
+trustPolicy: no-downgrade
+
+catalogs:
+  cli:
+    '@antfu/eslint-config': ^8.1.1
+    '@antfu/ni': ^30.0.0
+    bumpp: ^11.0.1
+    eslint: ^10.2.0
+    tsdown: ^0.17.3
+    tsx: ^4.21.0
+    typescript: ^6.0.2
+    vite: ^8.0.8
+  testing:
+    vitest: ^4.1.4
+  types:
+    '@types/node': ^25.6.0
+onlyBuiltDependencies:
+  - esbuild
