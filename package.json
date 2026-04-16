@@ -1,8 +1,8 @@
 {
   "name": "intentracker",
   "type": "module",
-  "packageManager": "pnpm@10.33.0",
   "version": "0.1.0",
+  "packageManager": "pnpm@10.33.0",
   "description": "Track project intent (goals, constraints, decisions) across agent sessions",
   "author": "Anthony Fu <anthonyfu117@hotmail.com>",
   "license": "MIT",
